@@ -514,7 +514,7 @@
       <div class="rule"></div>
     </div>
 
-    <div class="stamp"><span class="num">02</span> / 15 · Introduction</div>
+    <div class="stamp"><span class="num">02</span> / 16 · Introduction</div>
   </div>
 </section>
 
@@ -566,7 +566,7 @@
       </div>
     </div>
 
-    <div class="stamp"><span class="num">03</span> / 15 · Contexte</div>
+    <div class="stamp"><span class="num">03</span> / 16 · Contexte</div>
   </div>
 </section>
 
@@ -684,7 +684,7 @@
       </div>
     </div>
 
-    <div class="stamp"><span class="num">05</span> / 15 · Architecture</div>
+    <div class="stamp"><span class="num">05</span> / 16 · Architecture</div>
   </div>
 </section>
 
@@ -741,7 +741,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">06</span> / 15 · Étages 1-2</div>
+    <div class="stamp"><span class="num">06</span> / 16 · Étages 1-2</div>
   </div>
 </section>
 
@@ -805,7 +805,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">07</span> / 15 · Étage 3</div>
+    <div class="stamp"><span class="num">07</span> / 16 · Étage 3</div>
   </div>
 </section>
 
@@ -867,7 +867,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">08</span> / 15 · Étage 4</div>
+    <div class="stamp"><span class="num">08</span> / 16 · Étage 4</div>
   </div>
 </section>
 
@@ -917,7 +917,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">09</span> / 15 · Vérification</div>
+    <div class="stamp"><span class="num">09</span> / 16 · Vérification</div>
   </div>
 </section>
 
@@ -989,7 +989,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">10</span> / 15 · Réparation</div>
+    <div class="stamp"><span class="num">10</span> / 16 · Réparation</div>
   </div>
 </section>
 
@@ -1081,7 +1081,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">12</span> / 15 · Benchmark</div>
+    <div class="stamp"><span class="num">12</span> / 16 · Benchmark</div>
   </div>
 </section>
 
@@ -1140,11 +1140,83 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">13</span> / 15 · Taxonomie</div>
+    <div class="stamp"><span class="num">13</span> / 16 · Taxonomie</div>
   </div>
 </section>
 
-<!-- ============== 14 — OBSERVATIONS ============== -->
+<!-- ============== 14 — CASE STUDY: BIN PACKING C7 FAILURE ============== -->
+<section>
+  <div class="slide">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>CP-LLM</div>
+      <div class="meta"><span>§ 06.5 · <b>Étude de cas — un échec C7</b></span></div>
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 22px; padding-top: 36px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <p class="h-eyebrow">Bin Packing · code généré par le LLM</p>
+        <p class="mono" style="font-size: 13px; color: var(--accent);">ÉCHEC NIVEAU 2 · FAISABILITÉ</p>
+      </div>
+
+      <h2 class="h2" style="font-size: 38px;">
+        Le LLM généralise depuis la syntaxe Python ordinaire —<br>
+        <span style="color: var(--muted);">sans intégrer la sémantique du <span class="hl">DSL CP-SAT</span>.</span>
+      </h2>
+
+      <div class="two-col" style="gap: 36px; align-items: stretch;">
+        <div>
+          <div class="label" style="margin-bottom: 12px;">Code produit</div>
+          <pre class="code" style="font-size: 13px; padding: 16px 20px;"><span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n_objets):
+  model.<span class="fn">Add</span>(
+    <span class="fn">sum</span>(
+      tailles_objets[i] * (boite_objet[i] == j)
+      <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n_objets)
+    ) &lt;= capacite_boite
+  )
+model.<span class="fn">Minimize</span>(<span class="fn">max</span>(boite_objet) + <span class="num">1</span>)</pre>
+          <div style="margin-top: 14px;" class="card tinted">
+            <div class="label accent" style="margin-bottom: 8px;">ERREUR RUNTIME</div>
+            <p class="mono" style="font-size: 13px; color: var(--ink-2); line-height: 1.45;">
+              unsupported operand type(s) for *:<br>
+              'int' and 'BoundedLinearExpression'
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div class="label" style="margin-bottom: 12px;">Diagnostic · 2 fautes C7</div>
+          <div class="card" style="padding: 20px; border-color: var(--accent); background: rgba(216,67,31,0.05);">
+            <div class="num" style="background: var(--accent);">FAUTE 01</div>
+            <p style="margin-top: 10px; font-size: 16px; line-height: 1.45;">
+              <span class="mono" style="font-size: 14px;">(boite_objet[i] == j)</span>
+              n'est <b>pas un booléen</b> mais une <span class="mono" style="font-size: 14px;">BoundedLinearExpression</span> — non multipliable par un <span class="mono" style="font-size: 14px;">int</span>.
+            </p>
+            <p style="margin-top: 8px; font-size: 14px; color: var(--muted);">
+              ↳ Correct&nbsp;: réifier avec un <span class="mono" style="font-size: 13px;">BoolVar</span> + <span class="mono" style="font-size: 13px;">OnlyEnforceIf</span>.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px; margin-top: 12px; border-color: var(--accent); background: rgba(216,67,31,0.05);">
+            <div class="num" style="background: var(--accent);">FAUTE 02</div>
+            <p style="margin-top: 10px; font-size: 16px; line-height: 1.45;">
+              <span class="mono" style="font-size: 14px;">max(boite_objet)</span> applique le <span class="mono" style="font-size: 14px;">max</span> natif Python à des <span class="mono" style="font-size: 14px;">IntVar</span> — ne contraint rien.
+            </p>
+            <p style="margin-top: 8px; font-size: 14px; color: var(--muted);">
+              ↳ Correct&nbsp;: <span class="mono" style="font-size: 13px;">model.AddMaxEquality(...)</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mono" style="font-size: 14px; color: var(--ink-2); text-align: center; padding: 12px; border: 1px solid var(--ink); background: var(--paper-2); letter-spacing: 0.02em;">
+        <span class="accent" style="font-weight: 600;">↳ Exactement le type d'erreur qu'un humain familier d'ortools n'écrirait jamais.</span>
+      </div>
+    </div>
+
+    <div class="stamp"><span class="num">14</span> / 16 · Étude de cas</div>
+  </div>
+</section>
+
+<!-- ============== 15 — OBSERVATIONS ============== -->
 <section>
   <div class="slide">
     <div class="topbar">
@@ -1193,7 +1265,11 @@ queens = [
         </div>
       </div>
 
-      <div style="display: flex; gap: 56px; align-items: center; margin-top: 8px; border-top: 1px solid var(--ink); padding-top: 24px;">
+      <div style="display: flex; gap: 44px; align-items: center; margin-top: 8px; border-top: 1px solid var(--ink); padding-top: 24px;">
+        <div class="stat">
+          <div class="v">6<span class="unit">/10</span></div>
+          <div class="k">résolus du 1<sup>er</sup> coup</div>
+        </div>
         <div class="stat">
           <div class="v">10</div>
           <div class="k">problèmes benchmarkés</div>
@@ -1209,7 +1285,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">14</span> / 15 · Observations</div>
+    <div class="stamp"><span class="num">15</span> / 16 · Observations</div>
   </div>
 </section>
 
@@ -1270,7 +1346,7 @@ queens = [
       </div>
     </div>
 
-    <div class="stamp"><span class="num">15</span> / 15 · Fin</div>
+    <div class="stamp"><span class="num">16</span> / 16 · Fin</div>
   </div>
 </section>
 
@@ -1292,7 +1368,8 @@ queens = [
   "Passons aux résultats du benchmark.",
   "Nous avons benchmarké le pipeline sur 10 problèmes classiques de combinatoire et d'optimisation : N-Queens, Knapsack, Graph Coloring, Sudoku, Magic Square, Bin Packing, Problème de Diète, Job Shop, TSP, et VRP. Pour chacun, on dispose d'un modèle de référence manuel écrit par nos soins, servant de baseline. Le benchmark produit un rapport JSON détaillé avec les artefacts de chaque étage, toutes les tentatives, le statut de vérification par niveau, le temps d'exécution comparé à la référence, et l'étage d'échec si applicable.",
   "Nous avons défini une taxonomie d'erreurs pour cataloguer les défaillances. C1 : variable manquée. C2 : mauvais type de variable. C3 : bornes incorrectes. C4 : contrainte explicite manquée. C5, le plus fréquent : contrainte implicite manquée. C6 : mauvaise direction d'optimisation. C7 : erreur d'API ortools. Cette grille nous permet d'agréger les échecs par cause profonde plutôt que par symptôme apparent.",
-  "L'observation principale : le LLM se débrouille bien sur les problèmes classiques bien documentés dans ses données d'entraînement comme N-Queens ou Sudoku — il mémorise des patterns de modélisation complets. Il a plus de mal sur les problèmes avec de nombreuses contraintes implicites comme le Job Shop ou le VRP, où il y a beaucoup de structure non dite : précédences, capacité, ressources partagées, fenêtres temporelles.",
+  "Pour rendre ces catégories concrètes, voici un exemple réel tiré du Bin Packing. Le LLM a généré ce code, qui échoue à l'étage de faisabilité avec une erreur runtime : unsupported operand for int and BoundedLinearExpression. Deux fautes de catégorie C7 — mauvaise maîtrise de l'API ortools. Premièrement, l'expression boite_objet[i] == j ne produit pas un booléen Python mais une BoundedLinearExpression qu'on ne peut pas multiplier directement par un entier ; la bonne pratique serait de réifier la condition avec un BoolVar intermédiaire et d'utiliser OnlyEnforceIf. Deuxièmement, max(boite_objet) applique le max natif de Python à des IntVar, ce qui ne contraint rien dans le modèle ; il faudrait utiliser model.AddMaxEquality. Le point clé : le LLM généralise depuis la syntaxe Python ordinaire sans intégrer la sémantique du DSL CP-SAT. C'est exactement le type d'erreur qu'un humain familier d'ortools n'écrirait jamais.",
+  "Le résultat principal du benchmark : 6 problèmes sur 10 sont résolus correctement dès la première génération, sans passer par la boucle de réparation. Les 4 restants déclenchent un ou plusieurs retries, et certains échouent même après 3 tentatives. Sur le pattern global, le LLM se débrouille bien sur les problèmes classiques bien documentés dans ses données d'entraînement comme N-Queens ou Sudoku — il mémorise des patterns de modélisation complets. Il a plus de mal sur les problèmes avec de nombreuses contraintes implicites comme le Job Shop ou le VRP, où il y a beaucoup de structure non dite : précédences, capacité, ressources partagées, fenêtres temporelles.",
   "Pour conclure : CP-LLM montre que les LLMs peuvent prendre en charge une grande partie de la chaîne de modélisation, mais pas tout. Les étages analytiques sont gérés correctement sur problèmes standards. Le vrai défi reste la complétude des contraintes implicites — celles que tout expert CP formule instinctivement mais qu'un LLM omet régulièrement. La boucle de réparation améliore les résultats mais ne remplace pas une modélisation rigoureuse de départ. Côté outillage, on a un cache disque par hash SHA-256 qui rend les benchmarks reproductibles, et un dashboard Streamlit pour explorer les résultats. Ce que ce projet nous a appris, c'est que décomposer en étages est la bonne approche : non seulement pour améliorer la qualité, mais surtout pour attribuer les erreurs à un étage précis. Merci, on est disponibles pour les questions."
 ]
 </script>
